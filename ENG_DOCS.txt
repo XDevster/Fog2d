@@ -1,0 +1,64 @@
+============================================================
+           FOG2D ENGINE: TECHNICAL REFERENCE
+============================================================
+
+This file breaks down every component of the Fog2D core.
+
+------------------------------------------------------------
+1. GameObject CLASS (The Building Block)
+------------------------------------------------------------
+Purpose: A template for every entity (player, npc, item).
+
+- __init__(self, x, y, char, color, gravity, draggable):
+    * x, y: Position. Always pass numeric values (int/float).
+    * char: The visual symbol (e.g., '@').
+    * color: Colorama constant (e.g., Fore.GREEN).
+    * gravity (bool): If True, physics applies downward force.
+    * draggable (bool): Reserved for mouse/interact features.
+
+- vx, vy: Movement vectors.
+    * vx: Horizontal velocity. Positive = Right, Negative = Left.
+    * vy: Vertical velocity. Negative = JUMP (Upwards).
+
+------------------------------------------------------------
+2. Scene CLASS (The Game World)
+------------------------------------------------------------
+Purpose: Stores the tilemap and logic for a specific level.
+
+- __init__(self, raw_map): 
+    * Automatically handles "Padding". Ensures the map is a 
+      perfect rectangle to prevent IndexError crashes.
+- update(self, engine, dt):
+    * This is your playground. Use 'engine' to access objects 
+      and 'dt' to normalize movement speed across different CPUs.
+- render_ui(self, engine):
+    * Use print() here. The engine reserves lines 1-4 at the top 
+      of the screen for this text.
+
+------------------------------------------------------------
+3. Fog2D CLASS (The Core Engine)
+------------------------------------------------------------
+Purpose: Manages the game loop, physics, and rendering.
+
+- switch_scene(scene):
+    * Clears terminal and swaps the tilemap. Perfect for 
+      transitions (e.g., moving from a town to a dungeon).
+- get_tile(x, y):
+    * Critical for collision detection. Returns the character 
+      at specific coordinates.
+      Example: if engine.get_tile(p.x, p.y) == "$": collect coin.
+- _draw(x, y, char):
+    * Uses ANSI escape codes to place characters at specific coordinates. 
+      Offsets Y by +5 to prevent UI overlap.
+- run(fps):
+    * The Heartbeat. Process order: Logic -> Collision -> Rendering.
+
+------------------------------------------------------------
+4. CORE LIBRARIES
+------------------------------------------------------------
+- colorama: Essential for coordinate-based rendering. It allows 
+  the engine to paint specific spots on the screen instead of 
+  scrolling line by line.
+- keyboard: Essential for non-blocking input. It detects keys 
+  instantly while the engine continues to process physics.
+============================================================
